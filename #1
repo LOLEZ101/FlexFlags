@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FlexFlags | Galactic Flag Trainer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="galaxy-layer galaxy-layer--stars"></div>
+    <div class="galaxy-layer galaxy-layer--glow"></div>
+    <main class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="tag">UN Flags League</p>
+          <h1>FlexFlags</h1>
+          <p class="lede">
+            A Duolingo-inspired flight academy for memorizing every flag of all
+            <strong>UN member states and permanent observers</strong> – powered
+            by real artwork hosted on Wikimedia Commons.
+          </p>
+        </div>
+        <div class="hero-card">
+          <p>Mission Deck</p>
+          <p class="hero-card__count"><span id="deck-count">0</span> flags</p>
+          <p>Ready for liftoff!</p>
+        </div>
+      </header>
+
+      <section class="status-panel" aria-label="Pilot status">
+        <article class="status-card">
+          <p class="status-label">XP</p>
+          <p class="status-value" id="xp-value">0</p>
+        </article>
+        <article class="status-card">
+          <p class="status-label">Streak</p>
+          <p class="status-value" id="streak-value">0 🔥</p>
+        </article>
+        <article class="status-card">
+          <p class="status-label">Progress</p>
+          <p class="status-value" id="progress-label">0 / 0</p>
+        </article>
+      </section>
+
+      <section class="game-card" aria-live="polite">
+        <div class="flag-wrapper">
+          <img id="flag-image" alt="Flag under study" loading="lazy" />
+        </div>
+        <p class="prompt">Which country or observer uses this flag?</p>
+        <div class="options-grid" id="options-grid" role="group" aria-label="Answer choices"></div>
+        <button class="primary" id="next-btn" disabled>Next flag</button>
+        <p id="feedback" class="feedback" aria-live="assertive"></p>
+      </section>
+
+      <section class="progress-panel" aria-label="Galaxy path">
+        <div class="progress-bar">
+          <div class="progress-bar__fill" id="progress-fill"></div>
+        </div>
+        <p class="progress-note">
+          Nail answers to earn XP, keep your streak alive, and unlock the full
+          galactic atlas.
+        </p>
+      </section>
+
+      <section class="gallery-panel">
+        <header class="gallery-header">
+          <div>
+            <h2>Universal Gallery</h2>
+            <p>Browse every UN member state and permanent observer.</p>
+          </div>
+          <label class="search">
+            <span class="sr-only">Search flags</span>
+            <input
+              type="search"
+              id="search"
+              placeholder="Search by country or territory"
+              aria-label="Search flags"
+            />
+          </label>
+        </header>
+        <div class="gallery-grid" id="flag-gallery"></div>
+      </section>
+    </main>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
