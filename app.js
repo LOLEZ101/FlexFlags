@@ -1,0 +1,339 @@
+const countries = [
+  { name: "Afghanistan", flag: "Flag_of_Afghanistan.svg" },
+  { name: "Albania", flag: "Flag_of_Albania.svg" },
+  { name: "Algeria", flag: "Flag_of_Algeria.svg" },
+  { name: "Andorra", flag: "Flag_of_Andorra.svg" },
+  { name: "Angola", flag: "Flag_of_Angola.svg" },
+  { name: "Antigua and Barbuda", flag: "Flag_of_Antigua_and_Barbuda.svg" },
+  { name: "Argentina", flag: "Flag_of_Argentina.svg" },
+  { name: "Armenia", flag: "Flag_of_Armenia.svg" },
+  { name: "Australia", flag: "Flag_of_Australia.svg" },
+  { name: "Austria", flag: "Flag_of_Austria.svg" },
+  { name: "Azerbaijan", flag: "Flag_of_Azerbaijan.svg" },
+  { name: "Bahamas", flag: "Flag_of_the_Bahamas.svg" },
+  { name: "Bahrain", flag: "Flag_of_Bahrain.svg" },
+  { name: "Bangladesh", flag: "Flag_of_Bangladesh.svg" },
+  { name: "Barbados", flag: "Flag_of_Barbados.svg" },
+  { name: "Belarus", flag: "Flag_of_Belarus.svg" },
+  { name: "Belgium", flag: "Flag_of_Belgium.svg" },
+  { name: "Belize", flag: "Flag_of_Belize.svg" },
+  { name: "Benin", flag: "Flag_of_Benin.svg" },
+  { name: "Bhutan", flag: "Flag_of_Bhutan.svg" },
+  { name: "Bolivia", flag: "Flag_of_Bolivia.svg" },
+  { name: "Bosnia and Herzegovina", flag: "Flag_of_Bosnia_and_Herzegovina.svg" },
+  { name: "Botswana", flag: "Flag_of_Botswana.svg" },
+  { name: "Brazil", flag: "Flag_of_Brazil.svg" },
+  { name: "Brunei", flag: "Flag_of_Brunei.svg" },
+  { name: "Bulgaria", flag: "Flag_of_Bulgaria.svg" },
+  { name: "Burkina Faso", flag: "Flag_of_Burkina_Faso.svg" },
+  { name: "Burundi", flag: "Flag_of_Burundi.svg" },
+  { name: "Cabo Verde", flag: "Flag_of_Cape_Verde.svg" },
+  { name: "Cambodia", flag: "Flag_of_Cambodia.svg" },
+  { name: "Cameroon", flag: "Flag_of_Cameroon.svg" },
+  { name: "Canada", flag: "Flag_of_Canada.svg" },
+  { name: "Central African Republic", flag: "Flag_of_the_Central_African_Republic.svg" },
+  { name: "Chad", flag: "Flag_of_Chad.svg" },
+  { name: "Chile", flag: "Flag_of_Chile.svg" },
+  { name: "China", flag: "Flag_of_the_People's_Republic_of_China.svg" },
+  { name: "Colombia", flag: "Flag_of_Colombia.svg" },
+  { name: "Comoros", flag: "Flag_of_the_Comoros.svg" },
+  { name: "Republic of the Congo", flag: "Flag_of_the_Republic_of_the_Congo.svg" },
+  { name: "Costa Rica", flag: "Flag_of_Costa_Rica.svg" },
+  { name: "Côte d'Ivoire", flag: "Flag_of_Côte_d'Ivoire.svg" },
+  { name: "Croatia", flag: "Flag_of_Croatia.svg" },
+  { name: "Cuba", flag: "Flag_of_Cuba.svg" },
+  { name: "Cyprus", flag: "Flag_of_Cyprus.svg" },
+  { name: "Czechia", flag: "Flag_of_the_Czech_Republic.svg" },
+  { name: "Democratic Republic of the Congo", flag: "Flag_of_the_Democratic_Republic_of_the_Congo.svg" },
+  { name: "Denmark", flag: "Flag_of_Denmark.svg" },
+  { name: "Djibouti", flag: "Flag_of_Djibouti.svg" },
+  { name: "Dominica", flag: "Flag_of_Dominica.svg" },
+  { name: "Dominican Republic", flag: "Flag_of_the_Dominican_Republic.svg" },
+  { name: "Ecuador", flag: "Flag_of_Ecuador.svg" },
+  { name: "Egypt", flag: "Flag_of_Egypt.svg" },
+  { name: "El Salvador", flag: "Flag_of_El_Salvador.svg" },
+  { name: "Equatorial Guinea", flag: "Flag_of_Equatorial_Guinea.svg" },
+  { name: "Eritrea", flag: "Flag_of_Eritrea.svg" },
+  { name: "Estonia", flag: "Flag_of_Estonia.svg" },
+  { name: "Eswatini", flag: "Flag_of_Eswatini.svg" },
+  { name: "Ethiopia", flag: "Flag_of_Ethiopia.svg" },
+  { name: "Fiji", flag: "Flag_of_Fiji.svg" },
+  { name: "Finland", flag: "Flag_of_Finland.svg" },
+  { name: "France", flag: "Flag_of_France.svg" },
+  { name: "Gabon", flag: "Flag_of_Gabon.svg" },
+  { name: "Gambia", flag: "Flag_of_The_Gambia.svg" },
+  { name: "Georgia", flag: "Flag_of_Georgia.svg" },
+  { name: "Germany", flag: "Flag_of_Germany.svg" },
+  { name: "Ghana", flag: "Flag_of_Ghana.svg" },
+  { name: "Greece", flag: "Flag_of_Greece.svg" },
+  { name: "Grenada", flag: "Flag_of_Grenada.svg" },
+  { name: "Guatemala", flag: "Flag_of_Guatemala.svg" },
+  { name: "Guinea", flag: "Flag_of_Guinea.svg" },
+  { name: "Guinea-Bissau", flag: "Flag_of_Guinea-Bissau.svg" },
+  { name: "Guyana", flag: "Flag_of_Guyana.svg" },
+  { name: "Haiti", flag: "Flag_of_Haiti.svg" },
+  { name: "Honduras", flag: "Flag_of_Honduras.svg" },
+  { name: "Hungary", flag: "Flag_of_Hungary.svg" },
+  { name: "Iceland", flag: "Flag_of_Iceland.svg" },
+  { name: "India", flag: "Flag_of_India.svg" },
+  { name: "Indonesia", flag: "Flag_of_Indonesia.svg" },
+  { name: "Iran", flag: "Flag_of_Iran.svg" },
+  { name: "Iraq", flag: "Flag_of_Iraq.svg" },
+  { name: "Ireland", flag: "Flag_of_Ireland.svg" },
+  { name: "Israel", flag: "Flag_of_Israel.svg" },
+  { name: "Italy", flag: "Flag_of_Italy.svg" },
+  { name: "Jamaica", flag: "Flag_of_Jamaica.svg" },
+  { name: "Japan", flag: "Flag_of_Japan.svg" },
+  { name: "Jordan", flag: "Flag_of_Jordan.svg" },
+  { name: "Kazakhstan", flag: "Flag_of_Kazakhstan.svg" },
+  { name: "Kenya", flag: "Flag_of_Kenya.svg" },
+  { name: "Kiribati", flag: "Flag_of_Kiribati.svg" },
+  { name: "Kuwait", flag: "Flag_of_Kuwait.svg" },
+  { name: "Kyrgyzstan", flag: "Flag_of_Kyrgyzstan.svg" },
+  { name: "Laos", flag: "Flag_of_Laos.svg" },
+  { name: "Latvia", flag: "Flag_of_Latvia.svg" },
+  { name: "Lebanon", flag: "Flag_of_Lebanon.svg" },
+  { name: "Lesotho", flag: "Flag_of_Lesotho.svg" },
+  { name: "Liberia", flag: "Flag_of_Liberia.svg" },
+  { name: "Libya", flag: "Flag_of_Libya.svg" },
+  { name: "Liechtenstein", flag: "Flag_of_Liechtenstein.svg" },
+  { name: "Lithuania", flag: "Flag_of_Lithuania.svg" },
+  { name: "Luxembourg", flag: "Flag_of_Luxembourg.svg" },
+  { name: "Madagascar", flag: "Flag_of_Madagascar.svg" },
+  { name: "Malawi", flag: "Flag_of_Malawi.svg" },
+  { name: "Malaysia", flag: "Flag_of_Malaysia.svg" },
+  { name: "Maldives", flag: "Flag_of_Maldives.svg" },
+  { name: "Mali", flag: "Flag_of_Mali.svg" },
+  { name: "Malta", flag: "Flag_of_Malta.svg" },
+  { name: "Marshall Islands", flag: "Flag_of_the_Marshall_Islands.svg" },
+  { name: "Mauritania", flag: "Flag_of_Mauritania.svg" },
+  { name: "Mauritius", flag: "Flag_of_Mauritius.svg" },
+  { name: "Mexico", flag: "Flag_of_Mexico.svg" },
+  { name: "Micronesia (Federated States of)", flag: "Flag_of_the_Federated_States_of_Micronesia.svg" },
+  { name: "Moldova", flag: "Flag_of_Moldova.svg" },
+  { name: "Monaco", flag: "Flag_of_Monaco.svg" },
+  { name: "Mongolia", flag: "Flag_of_Mongolia.svg" },
+  { name: "Montenegro", flag: "Flag_of_Montenegro.svg" },
+  { name: "Morocco", flag: "Flag_of_Morocco.svg" },
+  { name: "Mozambique", flag: "Flag_of_Mozambique.svg" },
+  { name: "Myanmar", flag: "Flag_of_Myanmar.svg" },
+  { name: "Namibia", flag: "Flag_of_Namibia.svg" },
+  { name: "Nauru", flag: "Flag_of_Nauru.svg" },
+  { name: "Nepal", flag: "Flag_of_Nepal.svg" },
+  { name: "Netherlands", flag: "Flag_of_the_Netherlands.svg" },
+  { name: "New Zealand", flag: "Flag_of_New_Zealand.svg" },
+  { name: "Nicaragua", flag: "Flag_of_Nicaragua.svg" },
+  { name: "Niger", flag: "Flag_of_Niger.svg" },
+  { name: "Nigeria", flag: "Flag_of_Nigeria.svg" },
+  { name: "North Korea", flag: "Flag_of_North_Korea.svg" },
+  { name: "North Macedonia", flag: "Flag_of_North_Macedonia.svg" },
+  { name: "Norway", flag: "Flag_of_Norway.svg" },
+  { name: "Oman", flag: "Flag_of_Oman.svg" },
+  { name: "Pakistan", flag: "Flag_of_Pakistan.svg" },
+  { name: "Palau", flag: "Flag_of_Palau.svg" },
+  { name: "Panama", flag: "Flag_of_Panama.svg" },
+  { name: "Papua New Guinea", flag: "Flag_of_Papua_New_Guinea.svg" },
+  { name: "Paraguay", flag: "Flag_of_Paraguay.svg" },
+  { name: "Peru", flag: "Flag_of_Peru.svg" },
+  { name: "Philippines", flag: "Flag_of_the_Philippines.svg" },
+  { name: "Poland", flag: "Flag_of_Poland.svg" },
+  { name: "Portugal", flag: "Flag_of_Portugal.svg" },
+  { name: "Qatar", flag: "Flag_of_Qatar.svg" },
+  { name: "Romania", flag: "Flag_of_Romania.svg" },
+  { name: "Russia", flag: "Flag_of_Russia.svg" },
+  { name: "Rwanda", flag: "Flag_of_Rwanda.svg" },
+  { name: "Saint Kitts and Nevis", flag: "Flag_of_Saint_Kitts_and_Nevis.svg" },
+  { name: "Saint Lucia", flag: "Flag_of_Saint_Lucia.svg" },
+  { name: "Saint Vincent and the Grenadines", flag: "Flag_of_Saint_Vincent_and_the_Grenadines.svg" },
+  { name: "Samoa", flag: "Flag_of_Samoa.svg" },
+  { name: "San Marino", flag: "Flag_of_San_Marino.svg" },
+  { name: "Sao Tome and Principe", flag: "Flag_of_São_Tomé_and_Príncipe.svg" },
+  { name: "Saudi Arabia", flag: "Flag_of_Saudi_Arabia.svg" },
+  { name: "Senegal", flag: "Flag_of_Senegal.svg" },
+  { name: "Serbia", flag: "Flag_of_Serbia.svg" },
+  { name: "Seychelles", flag: "Flag_of_Seychelles.svg" },
+  { name: "Sierra Leone", flag: "Flag_of_Sierra_Leone.svg" },
+  { name: "Singapore", flag: "Flag_of_Singapore.svg" },
+  { name: "Slovakia", flag: "Flag_of_Slovakia.svg" },
+  { name: "Slovenia", flag: "Flag_of_Slovenia.svg" },
+  { name: "Solomon Islands", flag: "Flag_of_the_Solomon_Islands.svg" },
+  { name: "Somalia", flag: "Flag_of_Somalia.svg" },
+  { name: "South Africa", flag: "Flag_of_South_Africa.svg" },
+  { name: "South Korea", flag: "Flag_of_South_Korea.svg" },
+  { name: "South Sudan", flag: "Flag_of_South_Sudan.svg" },
+  { name: "Spain", flag: "Flag_of_Spain.svg" },
+  { name: "Sri Lanka", flag: "Flag_of_Sri_Lanka.svg" },
+  { name: "Sudan", flag: "Flag_of_Sudan.svg" },
+  { name: "Suriname", flag: "Flag_of_Suriname.svg" },
+  { name: "Sweden", flag: "Flag_of_Sweden.svg" },
+  { name: "Switzerland", flag: "Flag_of_Switzerland.svg" },
+  { name: "Syria", flag: "Flag_of_Syria.svg" },
+  { name: "Tajikistan", flag: "Flag_of_Tajikistan.svg" },
+  { name: "Tanzania", flag: "Flag_of_Tanzania.svg" },
+  { name: "Thailand", flag: "Flag_of_Thailand.svg" },
+  { name: "Timor-Leste", flag: "Flag_of_East_Timor.svg" },
+  { name: "Togo", flag: "Flag_of_Togo.svg" },
+  { name: "Tonga", flag: "Flag_of_Tonga.svg" },
+  { name: "Trinidad and Tobago", flag: "Flag_of_Trinidad_and_Tobago.svg" },
+  { name: "Tunisia", flag: "Flag_of_Tunisia.svg" },
+  { name: "Türkiye", flag: "Flag_of_Turkey.svg" },
+  { name: "Turkmenistan", flag: "Flag_of_Turkmenistan.svg" },
+  { name: "Tuvalu", flag: "Flag_of_Tuvalu.svg" },
+  { name: "Uganda", flag: "Flag_of_Uganda.svg" },
+  { name: "Ukraine", flag: "Flag_of_Ukraine.svg" },
+  { name: "United Arab Emirates", flag: "Flag_of_the_United_Arab_Emirates.svg" },
+  { name: "United Kingdom", flag: "Flag_of_the_United_Kingdom.svg" },
+  { name: "United States", flag: "Flag_of_the_United_States.svg" },
+  { name: "Uruguay", flag: "Flag_of_Uruguay.svg" },
+  { name: "Uzbekistan", flag: "Flag_of_Uzbekistan.svg" },
+  { name: "Vanuatu", flag: "Flag_of_Vanuatu.svg" },
+  { name: "Venezuela", flag: "Flag_of_Venezuela.svg" },
+  { name: "Vietnam", flag: "Flag_of_Vietnam.svg" },
+  { name: "Yemen", flag: "Flag_of_Yemen.svg" },
+  { name: "Zambia", flag: "Flag_of_Zambia.svg" },
+  { name: "Zimbabwe", flag: "Flag_of_Zimbabwe.svg" },
+  { name: "Holy See (Vatican City)", flag: "Flag_of_the_Vatican_City.svg" },
+  { name: "State of Palestine", flag: "Flag_of_Palestine.svg" }
+];
+
+const flagImage = document.getElementById("flag-image");
+const optionsGrid = document.getElementById("options-grid");
+const feedbackEl = document.getElementById("feedback");
+const nextBtn = document.getElementById("next-btn");
+const xpValue = document.getElementById("xp-value");
+const streakValue = document.getElementById("streak-value");
+const progressLabel = document.getElementById("progress-label");
+const progressFill = document.getElementById("progress-fill");
+const deckCount = document.getElementById("deck-count");
+const galleryGrid = document.getElementById("flag-gallery");
+const searchInput = document.getElementById("search");
+
+let currentCountry = null;
+let answered = 0;
+let streak = 0;
+let xp = 0;
+let questionResolved = false;
+
+const XP_REWARD = 10;
+deckCount.textContent = countries.length.toString();
+progressLabel.textContent = `${answered} / ${countries.length}`;
+
+const galleryCards = [];
+
+function encodeFlag(flagFile, width = 320) {
+  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(
+    flagFile
+  )}?width=${width}`;
+}
+
+function shuffle(array) {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function pickOptions(answer, amount = 4) {
+  const set = new Set([answer]);
+  while (set.size < amount) {
+    const sample = countries[Math.floor(Math.random() * countries.length)].name;
+    set.add(sample);
+  }
+  return shuffle([...set]);
+}
+
+function renderOptions(list) {
+  optionsGrid.innerHTML = "";
+  list.forEach((name) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = name;
+    button.addEventListener("click", () => handleAnswer(name, button));
+    optionsGrid.appendChild(button);
+  });
+}
+
+function setQuestion() {
+  const selection = countries[Math.floor(Math.random() * countries.length)];
+  currentCountry = selection;
+  questionResolved = false;
+  feedbackEl.textContent = "";
+  nextBtn.disabled = true;
+  flagImage.src = encodeFlag(selection.flag, 512);
+  flagImage.alt = `Flag of ${selection.name}`;
+  renderOptions(pickOptions(selection.name));
+}
+
+function handleAnswer(choice, button) {
+  if (questionResolved) return;
+  questionResolved = true;
+  const correct = choice === currentCountry.name;
+
+  optionsGrid.querySelectorAll("button").forEach((btn) => {
+    btn.disabled = true;
+    if (btn.textContent === currentCountry.name) {
+      btn.classList.add("correct");
+    }
+  });
+
+  if (!correct) {
+    button.classList.add("wrong");
+  }
+
+  if (correct) {
+    streak += 1;
+    xp += XP_REWARD;
+    feedbackEl.textContent = `Out of this world! ${currentCountry.name} it is.`;
+  } else {
+    streak = 0;
+    feedbackEl.textContent = `Close! That was ${currentCountry.name}.`;
+  }
+
+  answered += 1;
+  updateStatus();
+  nextBtn.disabled = false;
+}
+
+function updateStatus() {
+  xpValue.textContent = `${xp} XP`;
+  streakValue.textContent = `${streak} 🔥`;
+  progressLabel.textContent = `${answered} / ${countries.length}`;
+  const progress = Math.min(answered / countries.length, 1);
+  progressFill.style.width = `${progress * 100}%`;
+}
+
+nextBtn.addEventListener("click", setQuestion);
+
+function initGallery() {
+  const fragment = document.createDocumentFragment();
+  countries.forEach((country) => {
+    const card = document.createElement("article");
+    card.className = "gallery-card";
+    card.dataset.name = country.name.toLowerCase();
+
+    const preview = document.createElement("img");
+    preview.src = encodeFlag(country.flag, 160);
+    preview.alt = `Flag of ${country.name}`;
+
+    const label = document.createElement("p");
+    label.textContent = country.name;
+
+    card.append(preview, label);
+    fragment.appendChild(card);
+    galleryCards.push(card);
+  });
+  galleryGrid.appendChild(fragment);
+}
+
+searchInput.addEventListener("input", (event) => {
+  const value = event.target.value.trim().toLowerCase();
+  galleryCards.forEach((card) => {
+    const match = card.dataset.name.includes(value);
+    card.style.display = match ? "flex" : "none";
+  });
+});
+
+initGallery();
+setQuestion();
