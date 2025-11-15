@@ -275,12 +275,90 @@ let answered = 0;
 let streak = 0;
 let xp = 0;
 let questionResolved = false;
+let deckComplete = false;
+let autoAdvanceTimer = null;
+
+const totalFlags = countries.length;
+let studyQueue = [];
+let reviewQueue = [];
+const reviewSet = new Set();
+const mastered = new Set();
+
+let audioContext;
 
 const XP_REWARD = 10;
-deckCount.textContent = countries.length.toString();
-progressLabel.textContent = `${answered} / ${countries.length}`;
+deckCount.textContent = totalFlags.toString();
+progressLabel.textContent = `${answered} / ${totalFlags}`;
 
 const galleryCards = [];
+
+function getAudioContext() {
+  if (!window.AudioContext && !window.webkitAudioContext) return null;
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
+  }
+  return audioContext;
+}
+
+function playFeedbackSound(type) {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+  oscillator.type = "sine";
+  const isCorrect = type === "correct";
+  oscillator.frequency.value = isCorrect ? 880 : 220;
+  gain.gain.value = 0.0001;
+  oscillator.connect(gain);
+  gain.connect(ctx.destination);
+  const duration = isCorrect ? 0.25 : 0.35;
+  gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    ctx.currentTime + duration
+  );
+  oscillator.start();
+  oscillator.stop(ctx.currentTime + duration);
+}
+
+function buildStudyQueue() {
+  studyQueue = shuffle([...countries]);
+}
+
+function queueForReview(country) {
+  if (reviewSet.has(country.name)) return;
+  reviewQueue.push(country);
+  reviewSet.add(country.name);
+}
+
+function removeFromReview(name) {
+  if (!reviewSet.has(name)) return;
+  reviewQueue = reviewQueue.filter((country) => country.name !== name);
+  reviewSet.delete(name);
+}
+
+function markMastered(name) {
+  if (!mastered.has(name)) {
+    mastered.add(name);
+    answered = mastered.size;
+  }
+  removeFromReview(name);
+}
+
+function drawNextCountry() {
+  if (studyQueue.length > 0) {
+    return studyQueue.shift();
+  }
+  if (reviewQueue.length > 0) {
+    const next = reviewQueue.shift();
+    reviewSet.delete(next.name);
+    return next;
+  }
+  return null;
+}
 
 function encodeFlag(flagFile, width = 320) {
   return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(
@@ -317,15 +395,52 @@ function renderOptions(list) {
   });
 }
 
+function handleDeckCompletion() {
+  deckComplete = true;
+  currentCountry = null;
+  feedbackEl.textContent =
+    "Mission accomplished! Tap restart to run the deck again.";
+  optionsGrid.innerHTML = "";
+  flagImage.removeAttribute("src");
+  flagImage.alt = "Deck complete";
+  nextBtn.disabled = false;
+  nextBtn.textContent = "Restart mission";
+}
+
 function setQuestion() {
-  const selection = countries[Math.floor(Math.random() * countries.length)];
+  clearTimeout(autoAdvanceTimer);
+  const selection = drawNextCountry();
+  if (!selection) {
+    handleDeckCompletion();
+    return;
+  }
+  deckComplete = false;
   currentCountry = selection;
   questionResolved = false;
   feedbackEl.textContent = "";
   nextBtn.disabled = true;
+  nextBtn.textContent = "Next flag";
   flagImage.src = encodeFlag(selection.flag, 512);
   flagImage.alt = `Flag of ${selection.name}`;
   renderOptions(pickOptions(selection.name));
+}
+
+function advanceToNextFlag() {
+  if (deckComplete) return;
+  if (!questionResolved) return;
+  setQuestion();
+}
+
+function resetMission() {
+  mastered.clear();
+  answered = 0;
+  studyQueue = [];
+  reviewQueue = [];
+  reviewSet.clear();
+  deckComplete = false;
+  buildStudyQueue();
+  updateStatus();
+  setQuestion();
 }
 
 function handleAnswer(choice, button) {
@@ -342,31 +457,45 @@ function handleAnswer(choice, button) {
 
   if (!correct) {
     button.classList.add("wrong");
+    queueForReview(currentCountry);
+    playFeedbackSound("wrong");
   }
 
   if (correct) {
     streak += 1;
     xp += XP_REWARD;
+    markMastered(currentCountry.name);
     feedbackEl.textContent = `Out of this world! ${currentCountry.name} it is.`;
+    playFeedbackSound("correct");
   } else {
     streak = 0;
     feedbackEl.textContent = `Close! That was ${currentCountry.name}.`;
   }
 
-  answered += 1;
   updateStatus();
-  nextBtn.disabled = false;
+  nextBtn.disabled = correct;
+  if (correct) {
+    autoAdvanceTimer = setTimeout(() => {
+      advanceToNextFlag();
+    }, 650);
+  }
 }
 
 function updateStatus() {
   xpValue.textContent = `${xp} XP`;
   streakValue.textContent = `${streak} 🔥`;
-  progressLabel.textContent = `${answered} / ${countries.length}`;
-  const progress = Math.min(answered / countries.length, 1);
+  progressLabel.textContent = `${answered} / ${totalFlags}`;
+  const progress = Math.min(answered / totalFlags, 1);
   progressFill.style.width = `${progress * 100}%`;
 }
 
-nextBtn.addEventListener("click", setQuestion);
+nextBtn.addEventListener("click", () => {
+  if (deckComplete) {
+    resetMission();
+    return;
+  }
+  advanceToNextFlag();
+});
 
 function initGallery() {
   const fragment = document.createDocumentFragment();
@@ -398,4 +527,5 @@ searchInput.addEventListener("input", (event) => {
 });
 
 initGallery();
+buildStudyQueue();
 setQuestion();
