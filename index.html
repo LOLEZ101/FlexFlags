@@ -4,6 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>FlexFlags | Galactic Flag Trainer</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236cf4ff'/%3E%3Cstop offset='1' stop-color='%23ff7be9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='12' fill='%23050310'/%3E%3Ccircle cx='32' cy='32' r='22' fill='url(%23g)' opacity='0.35'/%3E%3Cpath d='M32 14l3.6 10.4L46 26l-8.8 6.4L39 42 32 35.7 25 42l1.8-9.6L18 26l10.4-1.6Z' fill='%23f0f4ff'/%3E%3C/svg%3E"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -50,13 +55,31 @@
       </section>
 
       <section class="game-card" aria-live="polite">
-        <div class="flag-wrapper">
-          <img id="flag-image" alt="Flag under study" loading="lazy" />
+        <div class="flag-panel">
+          <div class="flag-wrapper">
+            <img id="flag-image" alt="Flag under study" loading="lazy" />
+          </div>
         </div>
-        <p class="prompt">Which country or observer uses this flag?</p>
-        <div class="options-grid" id="options-grid" role="group" aria-label="Answer choices"></div>
-        <button class="primary" id="next-btn" disabled>Next flag</button>
-        <p id="feedback" class="feedback" aria-live="assertive"></p>
+        <div class="interaction-panel">
+          <p class="prompt">Which country or observer uses this flag?</p>
+          <div class="options-grid" id="options-grid" role="group" aria-label="Answer choices"></div>
+          <div class="inline-status" aria-label="Inline mission stats">
+            <div class="status-chip">
+              <span class="status-chip__label">XP</span>
+              <span class="status-chip__value" id="inline-xp">0 XP</span>
+            </div>
+            <div class="status-chip">
+              <span class="status-chip__label">Progress</span>
+              <span class="status-chip__value" id="inline-progress">0 / 0</span>
+            </div>
+            <div class="status-chip">
+              <span class="status-chip__label">Streak</span>
+              <span class="status-chip__value" id="inline-streak">0 🔥</span>
+            </div>
+          </div>
+          <button class="primary" id="next-btn" disabled>Next flag</button>
+          <p id="feedback" class="feedback" aria-live="assertive"></p>
+        </div>
       </section>
 
       <section class="progress-panel" aria-label="Galaxy path">
