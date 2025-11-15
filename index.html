@@ -55,13 +55,31 @@
       </section>
 
       <section class="game-card" aria-live="polite">
-        <div class="flag-wrapper">
-          <img id="flag-image" alt="Flag under study" loading="lazy" />
+        <div class="flag-panel">
+          <div class="flag-wrapper">
+            <img id="flag-image" alt="Flag under study" loading="lazy" />
+          </div>
         </div>
-        <p class="prompt">Which country or observer uses this flag?</p>
-        <div class="options-grid" id="options-grid" role="group" aria-label="Answer choices"></div>
-        <button class="primary" id="next-btn" disabled>Next flag</button>
-        <p id="feedback" class="feedback" aria-live="assertive"></p>
+        <div class="interaction-panel">
+          <p class="prompt">Which country or observer uses this flag?</p>
+          <div class="options-grid" id="options-grid" role="group" aria-label="Answer choices"></div>
+          <div class="inline-status" aria-label="Inline mission stats">
+            <div class="status-chip">
+              <span class="status-chip__label">XP</span>
+              <span class="status-chip__value" id="inline-xp">0 XP</span>
+            </div>
+            <div class="status-chip">
+              <span class="status-chip__label">Progress</span>
+              <span class="status-chip__value" id="inline-progress">0 / 0</span>
+            </div>
+            <div class="status-chip">
+              <span class="status-chip__label">Streak</span>
+              <span class="status-chip__value" id="inline-streak">0 🔥</span>
+            </div>
+          </div>
+          <button class="primary" id="next-btn" disabled>Next flag</button>
+          <p id="feedback" class="feedback" aria-live="assertive"></p>
+        </div>
       </section>
 
       <section class="progress-panel" aria-label="Galaxy path">

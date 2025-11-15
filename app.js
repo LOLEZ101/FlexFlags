@@ -256,6 +256,10 @@ const countries = [
   { name: "Wallis & Futuna", flag: "Flag_of_Wallis_and_Futuna.svg" }
 ];
 
+const countryIndexMap = new Map(
+  countries.map((country, index) => [country.name, index])
+);
+
 const flagImage = document.getElementById("flag-image");
 const optionsGrid = document.getElementById("options-grid");
 const feedbackEl = document.getElementById("feedback");
@@ -267,6 +271,9 @@ const progressFill = document.getElementById("progress-fill");
 const deckCount = document.getElementById("deck-count");
 const galleryGrid = document.getElementById("flag-gallery");
 const searchInput = document.getElementById("search");
+const inlineXpValue = document.getElementById("inline-xp");
+const inlineProgressValue = document.getElementById("inline-progress");
+const inlineStreakValue = document.getElementById("inline-streak");
 
 let currentCountry = null;
 let answered = 0;
@@ -285,10 +292,72 @@ const mastered = new Set();
 let audioContext;
 
 const XP_REWARD = 10;
+const AUTO_ADVANCE_DELAY = 450;
+const PROGRESS_COOKIE = "flexflags_progress";
+const COOKIE_TTL_DAYS = 30;
 deckCount.textContent = totalFlags.toString();
 progressLabel.textContent = `${answered} / ${totalFlags}`;
 
 const galleryCards = [];
+
+flagImage.addEventListener("load", () => {
+  requestAnimationFrame(() => {
+    flagImage.classList.add("is-loaded");
+  });
+});
+
+function setCookie(name, value, days) {
+  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function getCookie(name) {
+  return document.cookie
+    .split(";")
+    .map((chunk) => chunk.trim())
+    .find((chunk) => chunk.startsWith(`${name}=`))
+    ?.slice(name.length + 1)
+    ?.trim()
+    ?.replace(/^"|"$/g, "");
+}
+
+function clearCookie(name) {
+  document.cookie = `${name}=; expires=${new Date(0).toUTCString()}; path=/`;
+}
+
+function persistProgress() {
+  const payload = {
+    xp,
+    streak,
+    mastered: [...mastered]
+      .map((name) => countryIndexMap.get(name))
+      .filter((index) => typeof index === "number"),
+  };
+  setCookie(PROGRESS_COOKIE, JSON.stringify(payload), COOKIE_TTL_DAYS);
+}
+
+function loadProgressFromCookie() {
+  const raw = getCookie(PROGRESS_COOKIE);
+  if (!raw) return;
+  try {
+    const parsed = JSON.parse(decodeURIComponent(raw));
+    const parsedXp = Number(parsed.xp);
+    const parsedStreak = Number(parsed.streak);
+    xp = Number.isFinite(parsedXp) ? parsedXp : 0;
+    streak = Number.isFinite(parsedStreak) ? parsedStreak : 0;
+    if (Array.isArray(parsed.mastered)) {
+      parsed.mastered.forEach((index) => {
+        if (typeof index === "number" && countries[index]) {
+          mastered.add(countries[index].name);
+        }
+      });
+      answered = mastered.size;
+    }
+  } catch (error) {
+    console.warn("Unable to read progress cookie", error);
+    clearCookie(PROGRESS_COOKIE);
+  }
+}
 
 function getAudioContext() {
   if (!window.AudioContext && !window.webkitAudioContext) return null;
@@ -323,7 +392,8 @@ function playFeedbackSound(type) {
 }
 
 function buildStudyQueue() {
-  studyQueue = shuffle([...countries]);
+  const remaining = countries.filter((country) => !mastered.has(country.name));
+  studyQueue = shuffle(remaining);
 }
 
 function queueForReview(country) {
@@ -401,6 +471,7 @@ function handleDeckCompletion() {
   optionsGrid.innerHTML = "";
   flagImage.removeAttribute("src");
   flagImage.alt = "Deck complete";
+  flagImage.classList.remove("is-loaded");
   nextBtn.disabled = false;
   nextBtn.textContent = "Restart mission";
 }
@@ -418,6 +489,7 @@ function setQuestion() {
   feedbackEl.textContent = "";
   nextBtn.disabled = true;
   nextBtn.textContent = "Next flag";
+  flagImage.classList.remove("is-loaded");
   flagImage.src = encodeFlag(selection.flag, 512);
   flagImage.alt = `Flag of ${selection.name}`;
   renderOptions(pickOptions(selection.name));
@@ -432,6 +504,8 @@ function advanceToNextFlag() {
 function resetMission() {
   mastered.clear();
   answered = 0;
+  xp = 0;
+  streak = 0;
   studyQueue = [];
   reviewQueue = [];
   reviewSet.clear();
@@ -475,7 +549,7 @@ function handleAnswer(choice, button) {
   if (correct) {
     autoAdvanceTimer = setTimeout(() => {
       advanceToNextFlag();
-    }, 650);
+    }, AUTO_ADVANCE_DELAY);
   }
 }
 
@@ -485,6 +559,16 @@ function updateStatus() {
   progressLabel.textContent = `${answered} / ${totalFlags}`;
   const progress = Math.min(answered / totalFlags, 1);
   progressFill.style.width = `${progress * 100}%`;
+  if (inlineXpValue) {
+    inlineXpValue.textContent = `${xp} XP`;
+  }
+  if (inlineProgressValue) {
+    inlineProgressValue.textContent = `${answered} / ${totalFlags}`;
+  }
+  if (inlineStreakValue) {
+    inlineStreakValue.textContent = `${streak} 🔥`;
+  }
+  persistProgress();
 }
 
 nextBtn.addEventListener("click", () => {
@@ -524,6 +608,8 @@ searchInput.addEventListener("input", (event) => {
   });
 });
 
+loadProgressFromCookie();
 initGallery();
 buildStudyQueue();
+updateStatus();
 setQuestion();
