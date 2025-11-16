@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FlexFlags | Galactic Flag Trainer</title>
+    <title>Vexium | Galactic Flag Trainer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,7 +19,7 @@
       <header class="hero">
         <div>
           <p class="tag">UN Flags League</p>
-          <h1>FlexFlags</h1>
+          <h1>Vexium</h1>
           <p class="lede">
             A Duolingo-inspired flight academy for memorizing every flag of all
             <strong>UN member states and permanent observers</strong> – powered
