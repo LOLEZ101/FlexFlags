@@ -129,6 +129,27 @@ main {
   padding: clamp(1.5rem, 3vw, 3rem);
   margin-bottom: 2rem;
   box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: stretch;
+}
+
+
+.flag-panel,
+.interaction-panel {
+  min-width: 0;
+}
+
+.flag-panel {
+  display: flex;
+  align-items: center;
+}
+
+.interaction-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .flag-wrapper {
@@ -139,6 +160,7 @@ main {
   isolation: isolate;
   background: rgba(255, 255, 255, 0.02);
   overflow: visible;
+  transition: transform 220ms ease, box-shadow 220ms ease;
 }
 
 .flag-wrapper::before {
@@ -155,9 +177,10 @@ main {
   filter: blur(45px);
   opacity: 0.7;
   z-index: 0;
+  transition: opacity 220ms ease;
 }
 
-.flag-wrapper img {
+#flag-image {
   margin: 0 auto;
   max-height: 220px;
   object-fit: contain;
@@ -169,6 +192,28 @@ main {
   box-shadow: none;
   filter: drop-shadow(0 0 25px rgba(108, 244, 255, 0.25))
     drop-shadow(0 0 40px rgba(255, 123, 233, 0.2));
+  opacity: 0;
+  transform: translateX(-16px) scale(0.985);
+  transition: opacity 260ms cubic-bezier(0.18, 0.89, 0.32, 1.28),
+    transform 260ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+#flag-image.is-loaded {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.flag-wrapper.is-transitioning {
+  transform: translateX(-6px);
+}
+
+.flag-wrapper.is-transitioning::before {
+  opacity: 0.45;
+}
+
+.flag-wrapper.is-transitioning #flag-image {
+  opacity: 0;
+  transform: translateX(-22px) scale(0.96);
 }
 
 .prompt {
@@ -177,10 +222,9 @@ main {
 }
 
 .options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 0.75rem;
-  margin-bottom: 1rem;
 }
 
 button {
@@ -209,6 +253,7 @@ button:disabled {
   justify-content: center;
   min-height: 3rem;
   padding-inline: 1.5rem;
+  width: 100%;
 }
 
 .options-grid button:hover:not(:disabled),
@@ -237,6 +282,35 @@ button:disabled {
 .feedback {
   min-height: 1.5rem;
   margin-top: 0.75rem;
+  font-weight: 600;
+}
+
+.inline-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.status-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-chip__label {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.status-chip__value {
   font-weight: 600;
 }
 
@@ -381,11 +455,21 @@ button:disabled {
   }
 }
 
-@media (max-width: 640px) {
-  .options-grid {
+@media (prefers-reduced-motion: reduce) {
+  #flag-image,
+  .flag-wrapper,
+  .flag-wrapper::before {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .game-card {
     grid-template-columns: 1fr;
   }
+}
 
+@media (max-width: 640px) {
   .search input {
     min-width: 0;
     width: 100%;
