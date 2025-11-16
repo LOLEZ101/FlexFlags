@@ -1,18 +1,20 @@
 :root {
   color-scheme: dark;
-  --ring-cyan: #24f5ff;
-  --ring-blue: #3b6bff;
-  --ring-purple: #e25cff;
+  --ring-cyan: #4ef9ff;
+  --ring-azure: #36c3ff;
+  --ring-blue: #5a6cff;
+  --ring-purple: #ff7bff;
   --ring-gradient: linear-gradient(
-    135deg,
-    var(--ring-cyan),
-    var(--ring-blue) 55%,
-    var(--ring-purple)
+    130deg,
+    var(--ring-cyan) 0%,
+    var(--ring-azure) 32%,
+    var(--ring-blue) 62%,
+    var(--ring-purple) 100%
   );
-  --bg: #020312;
-  --card: rgba(5, 8, 36, 0.92);
-  --card-strong: rgba(15, 8, 50, 0.95);
-  --card-border: rgba(69, 128, 255, 0.22);
+  --bg: #04061a;
+  --card: rgba(9, 13, 40, 0.9);
+  --card-strong: rgba(17, 12, 52, 0.92);
+  --card-border: rgba(78, 163, 255, 0.28);
   --accent: var(--ring-cyan);
   --accent-strong: var(--ring-purple);
   --text: #f4f7ff;
@@ -31,9 +33,9 @@ body {
   min-height: 100vh;
   font-family: 'Space Grotesk', system-ui, -apple-system, BlinkMacSystemFont,
     'Segoe UI', sans-serif;
-  background: radial-gradient(circle at 18% 20%, rgba(36, 245, 255, 0.2), transparent 52%),
-    radial-gradient(circle at 72% 18%, rgba(226, 92, 255, 0.23), transparent 45%),
-    linear-gradient(135deg, #04071f, #05071f 35%, #0a0e2f 70%, #1a0937);
+  background: radial-gradient(circle at 20% 20%, rgba(78, 249, 255, 0.25), transparent 48%),
+    radial-gradient(circle at 75% 18%, rgba(255, 123, 255, 0.25), transparent 50%),
+    linear-gradient(135deg, #040b2b, #07124c 40%, #120b44 75%, #210a4b);
   color: var(--text);
   overflow-x: hidden;
 }
@@ -94,11 +96,11 @@ main {
 .hero-card {
   padding: 1.5rem;
   border-radius: 1.5rem;
-  background: linear-gradient(150deg, rgba(4, 8, 33, 0.9), rgba(13, 8, 45, 0.95));
+  background: linear-gradient(145deg, rgba(8, 14, 48, 0.85), rgba(18, 11, 60, 0.92));
   border: 1px solid var(--card-border);
   text-align: center;
   min-width: 200px;
-  box-shadow: 0 10px 40px rgba(59, 107, 255, 0.25);
+  box-shadow: 0 12px 50px rgba(78, 163, 255, 0.35);
 }
 
 .hero-card__count {
@@ -106,16 +108,16 @@ main {
   font-weight: 700;
   color: #fff;
   margin: 0.25rem 0 0.5rem;
-  text-shadow: 0 8px 30px rgba(36, 245, 255, 0.35);
+  text-shadow: 0 8px 30px rgba(78, 249, 255, 0.55);
 }
 
 .game-card {
-  background: linear-gradient(145deg, rgba(5, 8, 33, 0.95), rgba(20, 10, 45, 0.92));
+  background: linear-gradient(145deg, rgba(9, 13, 40, 0.92), rgba(19, 13, 62, 0.95));
   border: 1px solid var(--card-border);
   border-radius: 1.5rem;
   padding: clamp(1.5rem, 3vw, 3rem);
   margin-bottom: 2rem;
-  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 90px rgba(11, 15, 45, 0.65);
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   gap: clamp(1.5rem, 3vw, 3rem);
@@ -158,17 +160,17 @@ main {
   border-radius: inherit;
   background: radial-gradient(
       circle at 20% 20%,
-      rgba(255, 255, 255, 0.2),
+      rgba(255, 255, 255, 0.28),
       transparent 55%
     ),
     radial-gradient(
       circle,
-      rgba(36, 245, 255, 0.55),
-      rgba(59, 107, 255, 0.45) 45%,
-      rgba(226, 92, 255, 0.4) 70%
+      rgba(78, 249, 255, 0.65),
+      rgba(86, 130, 255, 0.55) 45%,
+      rgba(255, 123, 255, 0.5) 70%
     );
-  filter: blur(55px);
-  opacity: 0.85;
+  filter: blur(60px);
+  opacity: 0.95;
   z-index: 0;
   transition: opacity 220ms ease;
 }
@@ -199,11 +201,11 @@ main {
   padding: clamp(0.5rem, 1.5vw, 1rem);
   z-index: 1;
   position: relative;
-  background: rgba(5, 5, 20, 0.45);
-  box-shadow: 0 0 35px rgba(36, 245, 255, 0.4),
-    0 0 70px rgba(226, 92, 255, 0.4);
-  filter: drop-shadow(0 0 35px rgba(36, 245, 255, 0.45))
-    drop-shadow(0 0 65px rgba(226, 92, 255, 0.4));
+  background: rgba(10, 10, 35, 0.5);
+  box-shadow: 0 0 40px rgba(78, 249, 255, 0.55),
+    0 0 80px rgba(255, 123, 255, 0.55);
+  filter: drop-shadow(0 0 40px rgba(78, 249, 255, 0.6))
+    drop-shadow(0 0 75px rgba(255, 123, 255, 0.5));
   opacity: 0;
   transform: translateX(-16px) scale(0.985);
   transition: opacity 260ms cubic-bezier(0.18, 0.89, 0.32, 1.28),
@@ -259,9 +261,9 @@ button:disabled {
   text-align: center;
   background: linear-gradient(
     135deg,
-    rgba(36, 245, 255, 0.08),
-    rgba(59, 107, 255, 0.08),
-    rgba(226, 92, 255, 0.08)
+    rgba(78, 249, 255, 0.16),
+    rgba(86, 130, 255, 0.14),
+    rgba(255, 123, 255, 0.14)
   );
   color: var(--text);
   border: 1px solid transparent;
@@ -280,7 +282,7 @@ button:disabled {
 .options-grid button:hover:not(:disabled),
 .options-grid button:focus-visible:not(:disabled) {
   transform: translateY(-2px);
-  border-color: rgba(36, 245, 255, 0.4);
+  border-color: rgba(78, 249, 255, 0.45);
 }
 
 .options-grid button.correct {
@@ -291,7 +293,7 @@ button:disabled {
 .options-grid button.reveal-next {
   background: var(--ring-gradient);
   color: #050510;
-  box-shadow: 0 15px 40px rgba(59, 107, 255, 0.55);
+  box-shadow: 0 15px 45px rgba(86, 130, 255, 0.6);
 }
 
 .options-grid button.wrong {
@@ -326,8 +328,8 @@ button:disabled {
   width: 100%;
   height: 72px;
   border-radius: 1rem;
-  background: linear-gradient(135deg, rgba(3, 5, 28, 0.9), rgba(11, 8, 35, 0.95));
-  border: 1px solid rgba(59, 107, 255, 0.35);
+  background: linear-gradient(135deg, rgba(6, 9, 36, 0.85), rgba(15, 9, 40, 0.92));
+  border: 1px solid rgba(78, 163, 255, 0.38);
   overflow: hidden;
 }
 
@@ -335,9 +337,13 @@ button:disabled {
   position: absolute;
   inset: 0;
   width: 0%;
-  background: linear-gradient(120deg, rgba(36, 245, 255, 0.9), rgba(59, 107, 255, 0.85),
-      rgba(226, 92, 255, 0.85));
-  opacity: 0.55;
+  background: linear-gradient(
+    120deg,
+    rgba(78, 249, 255, 0.95),
+    rgba(86, 130, 255, 0.9),
+    rgba(255, 123, 255, 0.9)
+  );
+  opacity: 0.75;
   transition: width 240ms ease;
 }
 
@@ -369,10 +375,11 @@ button:disabled {
 }
 
 .gallery-panel {
-  background: linear-gradient(140deg, rgba(5, 8, 30, 0.9), rgba(18, 9, 38, 0.9));
+  background: linear-gradient(140deg, rgba(7, 10, 34, 0.9), rgba(18, 11, 44, 0.9));
   border-radius: 1.5rem;
   padding: clamp(1.5rem, 3vw, 3rem);
   border: 1px solid var(--card-border);
+  box-shadow: 0 18px 60px rgba(8, 12, 40, 0.6);
 }
 
 .gallery-header {
@@ -386,11 +393,12 @@ button:disabled {
 
 .search input {
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(78, 249, 255, 0.35);
+  background: rgba(6, 10, 32, 0.6);
   color: var(--text);
   padding: 0.75rem 1rem;
   min-width: 240px;
+  box-shadow: inset 0 0 25px rgba(86, 130, 255, 0.25);
 }
 
 .gallery-grid {
