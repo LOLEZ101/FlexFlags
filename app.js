@@ -256,17 +256,22 @@ const countries = [
   { name: "Wallis & Futuna", flag: "Flag_of_Wallis_and_Futuna.svg" }
 ];
 
+const countryIndexMap = new Map(
+  countries.map((country, index) => [country.name, index])
+);
+
 const flagImage = document.getElementById("flag-image");
+const flagWrapper = document.querySelector(".flag-wrapper");
 const optionsGrid = document.getElementById("options-grid");
 const feedbackEl = document.getElementById("feedback");
 const nextBtn = document.getElementById("next-btn");
-const xpValue = document.getElementById("xp-value");
-const streakValue = document.getElementById("streak-value");
-const progressLabel = document.getElementById("progress-label");
-const progressFill = document.getElementById("progress-fill");
 const deckCount = document.getElementById("deck-count");
 const galleryGrid = document.getElementById("flag-gallery");
 const searchInput = document.getElementById("search");
+const missionMeterFill = document.getElementById("mission-meter-fill");
+const missionXpValue = document.getElementById("mission-xp");
+const missionStreakValue = document.getElementById("mission-streak");
+const missionProgressValue = document.getElementById("mission-progress");
 
 let currentCountry = null;
 let answered = 0;
@@ -285,10 +290,114 @@ const mastered = new Set();
 let audioContext;
 
 const XP_REWARD = 10;
+const AUTO_ADVANCE_DELAY = 320;
+const PROGRESS_COOKIE = "flexflags_progress";
+const COOKIE_TTL_DAYS = 30;
 deckCount.textContent = totalFlags.toString();
-progressLabel.textContent = `${answered} / ${totalFlags}`;
 
 const galleryCards = [];
+
+flagImage.addEventListener("load", () => {
+  requestAnimationFrame(() => {
+    flagImage.classList.add("is-loaded");
+    if (flagWrapper) {
+      flagWrapper.classList.remove("is-transitioning");
+    }
+  });
+});
+
+function setCookie(name, value, days) {
+  if (typeof document === "undefined") return;
+  try {
+    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(
+      value
+    )}; expires=${expires}; path=/; SameSite=Lax`;
+  } catch (error) {
+    console.warn("Unable to set cookie", error);
+  }
+}
+
+function getCookie(name) {
+  if (typeof document === "undefined") return null;
+  const pairs = document.cookie ? document.cookie.split(";") : [];
+  for (const pair of pairs) {
+    const [rawKey, ...rest] = pair.trim().split("=");
+    if (rawKey === name) {
+      return decodeURIComponent(rest.join("="));
+    }
+  }
+  return null;
+}
+
+function clearCookie(name) {
+  if (typeof document === "undefined") return;
+  document.cookie = `${name}=; expires=${new Date(0).toUTCString()}; path=/; SameSite=Lax`;
+}
+
+function writeLocalSnapshot(value) {
+  if (typeof window === "undefined" || !window.localStorage) return;
+  try {
+    window.localStorage.setItem(PROGRESS_COOKIE, value);
+  } catch (error) {
+    // Ignore storage failures (privacy mode, etc.)
+  }
+}
+
+function readLocalSnapshot() {
+  if (typeof window === "undefined" || !window.localStorage) return null;
+  try {
+    return window.localStorage.getItem(PROGRESS_COOKIE);
+  } catch (error) {
+    return null;
+  }
+}
+
+function clearLocalSnapshot() {
+  if (typeof window === "undefined" || !window.localStorage) return;
+  try {
+    window.localStorage.removeItem(PROGRESS_COOKIE);
+  } catch (error) {
+    // Ignore
+  }
+}
+
+function persistProgress() {
+  const payload = {
+    xp,
+    streak,
+    mastered: [...mastered]
+      .map((name) => countryIndexMap.get(name))
+      .filter((index) => typeof index === "number"),
+  };
+  const serialized = JSON.stringify(payload);
+  setCookie(PROGRESS_COOKIE, serialized, COOKIE_TTL_DAYS);
+  writeLocalSnapshot(serialized);
+}
+
+function loadProgressSnapshot() {
+  const raw = getCookie(PROGRESS_COOKIE) || readLocalSnapshot();
+  if (!raw) return;
+  try {
+    const parsed = JSON.parse(raw);
+    const parsedXp = Number(parsed.xp);
+    const parsedStreak = Number(parsed.streak);
+    xp = Number.isFinite(parsedXp) ? parsedXp : 0;
+    streak = Number.isFinite(parsedStreak) ? parsedStreak : 0;
+    if (Array.isArray(parsed.mastered)) {
+      parsed.mastered.forEach((index) => {
+        if (typeof index === "number" && countries[index]) {
+          mastered.add(countries[index].name);
+        }
+      });
+      answered = mastered.size;
+    }
+  } catch (error) {
+    console.warn("Unable to read stored progress", error);
+    clearCookie(PROGRESS_COOKIE);
+    clearLocalSnapshot();
+  }
+}
 
 function getAudioContext() {
   if (!window.AudioContext && !window.webkitAudioContext) return null;
@@ -323,7 +432,16 @@ function playFeedbackSound(type) {
 }
 
 function buildStudyQueue() {
-  studyQueue = shuffle([...countries]);
+  const remaining = countries.filter((country) => !mastered.has(country.name));
+  studyQueue = shuffle(remaining);
+}
+
+function triggerFlagTransition() {
+  if (!flagWrapper) return;
+  flagWrapper.classList.remove("is-transitioning");
+  // Force reflow so the animation restarts consistently
+  void flagWrapper.offsetWidth;
+  flagWrapper.classList.add("is-transitioning");
 }
 
 function queueForReview(country) {
@@ -401,8 +519,14 @@ function handleDeckCompletion() {
   optionsGrid.innerHTML = "";
   flagImage.removeAttribute("src");
   flagImage.alt = "Deck complete";
+  flagImage.classList.remove("is-loaded");
+  if (flagWrapper) {
+    flagWrapper.classList.remove("is-transitioning");
+  }
   nextBtn.disabled = false;
   nextBtn.textContent = "Restart mission";
+  nextBtn.classList.remove("is-hidden");
+  nextBtn.removeAttribute("aria-hidden");
 }
 
 function setQuestion() {
@@ -418,6 +542,10 @@ function setQuestion() {
   feedbackEl.textContent = "";
   nextBtn.disabled = true;
   nextBtn.textContent = "Next flag";
+  nextBtn.classList.add("is-hidden");
+  nextBtn.setAttribute("aria-hidden", "true");
+  flagImage.classList.remove("is-loaded");
+  triggerFlagTransition();
   flagImage.src = encodeFlag(selection.flag, 512);
   flagImage.alt = `Flag of ${selection.name}`;
   renderOptions(pickOptions(selection.name));
@@ -432,6 +560,8 @@ function advanceToNextFlag() {
 function resetMission() {
   mastered.clear();
   answered = 0;
+  xp = 0;
+  streak = 0;
   studyQueue = [];
   reviewQueue = [];
   reviewSet.clear();
@@ -442,14 +572,25 @@ function resetMission() {
 }
 
 function handleAnswer(choice, button) {
-  if (questionResolved) return;
+  if (questionResolved) {
+    if (button && button.dataset.action === "continue") {
+      button.dataset.action = "";
+      button.disabled = true;
+      button.classList.remove("reveal-next");
+      advanceToNextFlag();
+    }
+    return;
+  }
+
   questionResolved = true;
   const correct = choice === currentCountry.name;
 
+  let correctButton = null;
   optionsGrid.querySelectorAll("button").forEach((btn) => {
     btn.disabled = true;
     if (btn.textContent === currentCountry.name) {
       btn.classList.add("correct");
+      correctButton = btn;
     }
   });
 
@@ -457,6 +598,16 @@ function handleAnswer(choice, button) {
     button.classList.add("wrong");
     queueForReview(currentCountry);
     playFeedbackSound("wrong");
+    if (correctButton) {
+      correctButton.disabled = false;
+      correctButton.dataset.action = "continue";
+      correctButton.classList.add("reveal-next");
+      correctButton.setAttribute(
+        "aria-label",
+        `${currentCountry.name}. Tap to continue`
+      );
+      correctButton.focus({ preventScroll: true });
+    }
   }
 
   if (correct) {
@@ -471,20 +622,29 @@ function handleAnswer(choice, button) {
   }
 
   updateStatus();
-  nextBtn.disabled = correct;
+  nextBtn.disabled = true;
   if (correct) {
     autoAdvanceTimer = setTimeout(() => {
       advanceToNextFlag();
-    }, 650);
+    }, AUTO_ADVANCE_DELAY);
   }
 }
 
 function updateStatus() {
-  xpValue.textContent = `${xp} XP`;
-  streakValue.textContent = `${streak} 🔥`;
-  progressLabel.textContent = `${answered} / ${totalFlags}`;
   const progress = Math.min(answered / totalFlags, 1);
-  progressFill.style.width = `${progress * 100}%`;
+  if (missionXpValue) {
+    missionXpValue.textContent = `${xp} XP`;
+  }
+  if (missionStreakValue) {
+    missionStreakValue.textContent = `${streak} 🔥 streak`;
+  }
+  if (missionProgressValue) {
+    missionProgressValue.textContent = `${answered} / ${totalFlags}`;
+  }
+  if (missionMeterFill) {
+    missionMeterFill.style.width = `${progress * 100}%`;
+  }
+  persistProgress();
 }
 
 nextBtn.addEventListener("click", () => {
@@ -524,6 +684,8 @@ searchInput.addEventListener("input", (event) => {
   });
 });
 
+loadProgressSnapshot();
 initGallery();
 buildStudyQueue();
+updateStatus();
 setQuestion();
