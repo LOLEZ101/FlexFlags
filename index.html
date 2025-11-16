@@ -39,6 +39,36 @@
         </div>
       </header>
 
+      <section class="auth-section" aria-labelledby="auth-heading">
+        <div>
+          <h2 id="auth-heading">Create your cadet profile</h2>
+          <p>
+            Reserve a spot on the Vexium flight deck with an email address and a
+            strong password. We'll simulate a quick signup so you can jump
+            straight into training.
+          </p>
+        </div>
+        <form id="signup-form" class="auth-card" novalidate>
+          <label>
+            <span>Email address</span>
+            <input type="email" id="signup-email" required placeholder="astro@academy.io" />
+          </label>
+          <label>
+            <span>Password</span>
+            <input
+              type="password"
+              id="signup-password"
+              required
+              minlength="9"
+              placeholder="Must be more than 8 characters"
+            />
+            <small>Passwords need to be at least 9 characters long.</small>
+          </label>
+          <button type="submit" class="primary">Create account</button>
+          <p id="signup-feedback" class="auth-feedback" aria-live="polite"></p>
+        </form>
+      </section>
+
       <section class="game-card" aria-live="polite">
         <div class="flag-panel">
           <div class="flag-wrapper">

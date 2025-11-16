@@ -272,6 +272,10 @@ const missionMeterFill = document.getElementById("mission-meter-fill");
 const missionXpValue = document.getElementById("mission-xp");
 const missionStreakValue = document.getElementById("mission-streak");
 const missionProgressValue = document.getElementById("mission-progress");
+const signupForm = document.getElementById("signup-form");
+const signupEmailInput = document.getElementById("signup-email");
+const signupPasswordInput = document.getElementById("signup-password");
+const signupFeedback = document.getElementById("signup-feedback");
 
 let currentCountry = null;
 let answered = 0;
@@ -293,6 +297,7 @@ const XP_REWARD = 10;
 const AUTO_ADVANCE_DELAY = 320;
 const PROGRESS_COOKIE = "flexflags_progress";
 const COOKIE_TTL_DAYS = 30;
+const CADET_PROFILE_KEY = "vexium_cadet_profile";
 deckCount.textContent = totalFlags.toString();
 
 const galleryCards = [];
@@ -359,6 +364,25 @@ function clearLocalSnapshot() {
     window.localStorage.removeItem(PROGRESS_COOKIE);
   } catch (error) {
     // Ignore
+  }
+}
+
+function persistCadetProfile(profile) {
+  if (typeof window === "undefined" || !window.localStorage) return;
+  try {
+    window.localStorage.setItem(CADET_PROFILE_KEY, JSON.stringify(profile));
+  } catch (error) {
+    // Ignore storage failures
+  }
+}
+
+function loadCadetProfile() {
+  if (typeof window === "undefined" || !window.localStorage) return null;
+  try {
+    const raw = window.localStorage.getItem(CADET_PROFILE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    return null;
   }
 }
 
@@ -684,8 +708,48 @@ searchInput.addEventListener("input", (event) => {
   });
 });
 
+function initCadetSignup() {
+  if (!signupForm || !signupFeedback) return;
+  const existingProfile = loadCadetProfile();
+  if (existingProfile && existingProfile.email) {
+    signupFeedback.textContent = `Welcome back, ${existingProfile.email}!`;
+    signupFeedback.classList.add("is-success");
+  }
+
+  signupForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    signupFeedback.textContent = "";
+    signupFeedback.classList.remove("is-success", "is-error");
+
+    const email = signupEmailInput ? signupEmailInput.value.trim() : "";
+    const password = signupPasswordInput ? signupPasswordInput.value : "";
+
+    if (!email || (signupEmailInput && !signupEmailInput.checkValidity())) {
+      signupFeedback.textContent = "Please enter a valid email address.";
+      signupFeedback.classList.add("is-error");
+      return;
+    }
+
+    if (!password || password.length < 9) {
+      signupFeedback.textContent = "Password must be more than 8 characters long.";
+      signupFeedback.classList.add("is-error");
+      return;
+    }
+
+    const cadetProfile = {
+      email,
+      createdAt: new Date().toISOString(),
+    };
+    persistCadetProfile(cadetProfile);
+    signupFeedback.textContent = `Welcome aboard, ${email}! Your cadet profile is ready.`;
+    signupFeedback.classList.add("is-success");
+    signupForm.reset();
+  });
+}
+
 loadProgressSnapshot();
 initGallery();
 buildStudyQueue();
 updateStatus();
 setQuestion();
+initCadetSignup();
