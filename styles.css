@@ -218,6 +218,57 @@ main {
   gap: 1rem;
 }
 
+.question-timer {
+  background: linear-gradient(135deg, rgba(108, 244, 255, 0.08), rgba(255, 123, 233, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  padding: 0.85rem 1.1rem;
+  display: grid;
+  gap: 0.65rem;
+  box-shadow: 0 10px 30px rgba(5, 3, 16, 0.35) inset;
+}
+
+.question-timer > div:first-child {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.question-timer__value {
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 600;
+  color: #fff;
+  margin-right: 0.4rem;
+}
+
+.question-timer__label {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.question-timer__bar {
+  width: 100%;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.question-timer__fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #6cf4ff, #ff7be9);
+  transform-origin: left center;
+  transition: transform 0.2s linear;
+}
+
+.question-timer.is-expired .question-timer__value {
+  color: #ff9687;
+}
+
 .flag-wrapper {
   position: relative;
   border-radius: 1.25rem;

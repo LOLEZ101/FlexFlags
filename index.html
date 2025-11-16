@@ -77,6 +77,15 @@
         </div>
         <div class="interaction-panel">
           <p class="prompt">Which country or observer uses this flag?</p>
+          <div class="question-timer" id="question-timer" role="timer" aria-live="polite">
+            <div>
+              <span class="question-timer__value" id="question-timer-value">5.0</span>
+              <span class="question-timer__label">seconds to decide</span>
+            </div>
+            <div class="question-timer__bar" aria-hidden="true">
+              <div class="question-timer__fill" id="question-timer-fill"></div>
+            </div>
+          </div>
           <div class="options-grid" id="options-grid" role="group" aria-label="Answer choices"></div>
           <p id="feedback" class="feedback" aria-live="assertive"></p>
         </div>

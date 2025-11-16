@@ -276,6 +276,9 @@ const signupForm = document.getElementById("signup-form");
 const signupEmailInput = document.getElementById("signup-email");
 const signupPasswordInput = document.getElementById("signup-password");
 const signupFeedback = document.getElementById("signup-feedback");
+const questionTimerEl = document.getElementById("question-timer");
+const questionTimerValue = document.getElementById("question-timer-value");
+const questionTimerFill = document.getElementById("question-timer-fill");
 
 let currentCountry = null;
 let answered = 0;
@@ -284,6 +287,8 @@ let xp = 0;
 let questionResolved = false;
 let deckComplete = false;
 let autoAdvanceTimer = null;
+let countdownInterval = null;
+let timerDeadline = 0;
 
 const totalFlags = countries.length;
 let studyQueue = [];
@@ -295,6 +300,8 @@ let audioContext;
 
 const XP_REWARD = 10;
 const AUTO_ADVANCE_DELAY = 320;
+const QUESTION_TIME_LIMIT = 5; // seconds
+const TIMER_UPDATE_MS = 100;
 const PROGRESS_COOKIE = "flexflags_progress";
 const COOKIE_TTL_DAYS = 30;
 const CADET_PROFILE_KEY = "vexium_cadet_profile";
@@ -437,22 +444,93 @@ function getAudioContext() {
 function playFeedbackSound(type) {
   const ctx = getAudioContext();
   if (!ctx) return;
+
+  if (type === "correct") {
+    const now = ctx.currentTime;
+    const mainTone = ctx.createOscillator();
+    mainTone.type = "triangle";
+    mainTone.frequency.setValueAtTime(660, now);
+    mainTone.frequency.exponentialRampToValueAtTime(1200, now + 0.5);
+
+    const shimmer = ctx.createOscillator();
+    shimmer.type = "sine";
+    shimmer.frequency.setValueAtTime(1320, now);
+    shimmer.frequency.exponentialRampToValueAtTime(2000, now + 0.5);
+
+    const gain = ctx.createGain();
+    gain.gain.value = 0.0001;
+    mainTone.connect(gain);
+    shimmer.connect(gain);
+    gain.connect(ctx.destination);
+
+    gain.gain.exponentialRampToValueAtTime(0.5, now + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+
+    mainTone.start(now);
+    shimmer.start(now + 0.02);
+    mainTone.stop(now + 0.7);
+    shimmer.stop(now + 0.7);
+    return;
+  }
+
   const oscillator = ctx.createOscillator();
   const gain = ctx.createGain();
   oscillator.type = "sine";
-  const isCorrect = type === "correct";
-  oscillator.frequency.value = isCorrect ? 880 : 220;
+  oscillator.frequency.value = 220;
   gain.gain.value = 0.0001;
   oscillator.connect(gain);
   gain.connect(ctx.destination);
-  const duration = isCorrect ? 0.25 : 0.35;
+  const duration = 0.35;
   gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.01);
-  gain.gain.exponentialRampToValueAtTime(
-    0.0001,
-    ctx.currentTime + duration
-  );
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
   oscillator.start();
   oscillator.stop(ctx.currentTime + duration);
+}
+
+function updateQuestionTimerDisplay(remainingMs) {
+  if (!questionTimerValue || !questionTimerFill) return;
+  const total = QUESTION_TIME_LIMIT * 1000;
+  const clamped = Math.max(0, remainingMs);
+  const seconds = (clamped / 1000).toFixed(1);
+  questionTimerValue.textContent = seconds;
+  const progress = Math.min(Math.max(clamped / total, 0), 1);
+  questionTimerFill.style.transform = `scaleX(${progress})`;
+}
+
+function stopQuestionTimer({ markExpired = false, resetDisplay = false } = {}) {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+  if (questionTimerEl) {
+    if (markExpired) {
+      questionTimerEl.classList.add("is-expired");
+    } else {
+      questionTimerEl.classList.remove("is-expired");
+    }
+  }
+  if (resetDisplay) {
+    updateQuestionTimerDisplay(QUESTION_TIME_LIMIT * 1000);
+  }
+}
+
+function startQuestionTimer() {
+  if (!questionTimerEl || !questionTimerValue || !questionTimerFill) return;
+  stopQuestionTimer();
+  timerDeadline = Date.now() + QUESTION_TIME_LIMIT * 1000;
+  updateQuestionTimerDisplay(QUESTION_TIME_LIMIT * 1000);
+  countdownInterval = setInterval(handleTimerTick, TIMER_UPDATE_MS);
+}
+
+function handleTimerTick() {
+  const remaining = timerDeadline - Date.now();
+  if (remaining <= 0) {
+    updateQuestionTimerDisplay(0);
+    stopQuestionTimer({ markExpired: true });
+    handleTimeout();
+    return;
+  }
+  updateQuestionTimerDisplay(remaining);
 }
 
 function buildStudyQueue() {
@@ -538,6 +616,7 @@ function renderOptions(list) {
 function handleDeckCompletion() {
   deckComplete = true;
   currentCountry = null;
+  stopQuestionTimer({ resetDisplay: true });
   feedbackEl.textContent =
     "Mission accomplished! Tap restart to run the deck again.";
   optionsGrid.innerHTML = "";
@@ -551,6 +630,36 @@ function handleDeckCompletion() {
   nextBtn.textContent = "Restart mission";
   nextBtn.classList.remove("is-hidden");
   nextBtn.removeAttribute("aria-hidden");
+}
+
+function handleTimeout() {
+  if (questionResolved || !currentCountry) return;
+  stopQuestionTimer({ markExpired: true });
+  questionResolved = true;
+  queueForReview(currentCountry);
+  playFeedbackSound("wrong");
+  streak = 0;
+  const buttons = optionsGrid.querySelectorAll("button");
+  let correctButton = null;
+  buttons.forEach((btn) => {
+    btn.disabled = true;
+    if (btn.textContent === currentCountry.name) {
+      correctButton = btn;
+    }
+  });
+  if (correctButton) {
+    correctButton.disabled = false;
+    correctButton.dataset.action = "continue";
+    correctButton.classList.add("reveal-next");
+    correctButton.setAttribute(
+      "aria-label",
+      `${currentCountry.name}. Time's up, tap to continue`
+    );
+    correctButton.focus({ preventScroll: true });
+  }
+  feedbackEl.textContent = `Time's up! That was ${currentCountry.name}.`;
+  nextBtn.disabled = true;
+  updateStatus();
 }
 
 function setQuestion() {
@@ -573,6 +682,7 @@ function setQuestion() {
   flagImage.src = encodeFlag(selection.flag, 512);
   flagImage.alt = `Flag of ${selection.name}`;
   renderOptions(pickOptions(selection.name));
+  startQuestionTimer();
 }
 
 function advanceToNextFlag() {
@@ -607,6 +717,7 @@ function handleAnswer(choice, button) {
   }
 
   questionResolved = true;
+  stopQuestionTimer();
   const correct = choice === currentCountry.name;
 
   let correctButton = null;
