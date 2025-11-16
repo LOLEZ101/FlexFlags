@@ -33,9 +33,7 @@ body {
   min-height: 100vh;
   font-family: 'Space Grotesk', system-ui, -apple-system, BlinkMacSystemFont,
     'Segoe UI', sans-serif;
-  background: radial-gradient(circle at 20% 20%, rgba(78, 249, 255, 0.25), transparent 48%),
-    radial-gradient(circle at 75% 18%, rgba(255, 123, 255, 0.25), transparent 50%),
-    linear-gradient(135deg, #040b2b, #07124c 40%, #120b44 75%, #210a4b);
+  background: linear-gradient(135deg, #ff29b8 0%, #44f5ff 55%, #1f3fff 100%);
   color: var(--text);
   overflow-x: hidden;
 }
