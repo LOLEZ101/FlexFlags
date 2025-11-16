@@ -39,21 +39,6 @@
         </div>
       </header>
 
-      <section class="status-panel" aria-label="Pilot status">
-        <article class="status-card">
-          <p class="status-label">XP</p>
-          <p class="status-value" id="xp-value">0</p>
-        </article>
-        <article class="status-card">
-          <p class="status-label">Streak</p>
-          <p class="status-value" id="streak-value">0 🔥</p>
-        </article>
-        <article class="status-card">
-          <p class="status-label">Progress</p>
-          <p class="status-value" id="progress-label">0 / 0</p>
-        </article>
-      </section>
-
       <section class="game-card" aria-live="polite">
         <div class="flag-panel">
           <div class="flag-wrapper">
@@ -63,33 +48,19 @@
         <div class="interaction-panel">
           <p class="prompt">Which country or observer uses this flag?</p>
           <div class="options-grid" id="options-grid" role="group" aria-label="Answer choices"></div>
-          <div class="inline-status" aria-label="Inline mission stats">
-            <div class="status-chip">
-              <span class="status-chip__label">XP</span>
-              <span class="status-chip__value" id="inline-xp">0 XP</span>
-            </div>
-            <div class="status-chip">
-              <span class="status-chip__label">Progress</span>
-              <span class="status-chip__value" id="inline-progress">0 / 0</span>
-            </div>
-            <div class="status-chip">
-              <span class="status-chip__label">Streak</span>
-              <span class="status-chip__value" id="inline-streak">0 🔥</span>
-            </div>
-          </div>
-          <button class="primary" id="next-btn" disabled>Next flag</button>
           <p id="feedback" class="feedback" aria-live="assertive"></p>
         </div>
-      </section>
-
-      <section class="progress-panel" aria-label="Galaxy path">
-        <div class="progress-bar">
-          <div class="progress-bar__fill" id="progress-fill"></div>
+        <div class="mission-meter" aria-label="Mission progress">
+          <div class="mission-meter__bar">
+            <div class="mission-meter__fill" id="mission-meter-fill"></div>
+            <div class="mission-meter__stats">
+              <span id="mission-xp" data-label="XP">0 XP</span>
+              <span id="mission-streak" data-label="Streak">0 🔥 streak</span>
+              <span id="mission-progress" data-label="Progress">0 / 0</span>
+            </div>
+          </div>
         </div>
-        <p class="progress-note">
-          Nail answers to earn XP, keep your streak alive, and unlock the full
-          galactic atlas.
-        </p>
+        <button class="primary is-hidden" id="next-btn" disabled aria-hidden="true">Next flag</button>
       </section>
 
       <section class="gallery-panel">

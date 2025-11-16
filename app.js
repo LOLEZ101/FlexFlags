@@ -265,16 +265,13 @@ const flagWrapper = document.querySelector(".flag-wrapper");
 const optionsGrid = document.getElementById("options-grid");
 const feedbackEl = document.getElementById("feedback");
 const nextBtn = document.getElementById("next-btn");
-const xpValue = document.getElementById("xp-value");
-const streakValue = document.getElementById("streak-value");
-const progressLabel = document.getElementById("progress-label");
-const progressFill = document.getElementById("progress-fill");
 const deckCount = document.getElementById("deck-count");
 const galleryGrid = document.getElementById("flag-gallery");
 const searchInput = document.getElementById("search");
-const inlineXpValue = document.getElementById("inline-xp");
-const inlineProgressValue = document.getElementById("inline-progress");
-const inlineStreakValue = document.getElementById("inline-streak");
+const missionMeterFill = document.getElementById("mission-meter-fill");
+const missionXpValue = document.getElementById("mission-xp");
+const missionStreakValue = document.getElementById("mission-streak");
+const missionProgressValue = document.getElementById("mission-progress");
 
 let currentCountry = null;
 let answered = 0;
@@ -297,7 +294,6 @@ const AUTO_ADVANCE_DELAY = 320;
 const PROGRESS_COOKIE = "flexflags_progress";
 const COOKIE_TTL_DAYS = 30;
 deckCount.textContent = totalFlags.toString();
-progressLabel.textContent = `${answered} / ${totalFlags}`;
 
 const galleryCards = [];
 
@@ -529,6 +525,8 @@ function handleDeckCompletion() {
   }
   nextBtn.disabled = false;
   nextBtn.textContent = "Restart mission";
+  nextBtn.classList.remove("is-hidden");
+  nextBtn.removeAttribute("aria-hidden");
 }
 
 function setQuestion() {
@@ -544,6 +542,8 @@ function setQuestion() {
   feedbackEl.textContent = "";
   nextBtn.disabled = true;
   nextBtn.textContent = "Next flag";
+  nextBtn.classList.add("is-hidden");
+  nextBtn.setAttribute("aria-hidden", "true");
   flagImage.classList.remove("is-loaded");
   triggerFlagTransition();
   flagImage.src = encodeFlag(selection.flag, 512);
@@ -572,14 +572,25 @@ function resetMission() {
 }
 
 function handleAnswer(choice, button) {
-  if (questionResolved) return;
+  if (questionResolved) {
+    if (button && button.dataset.action === "continue") {
+      button.dataset.action = "";
+      button.disabled = true;
+      button.classList.remove("reveal-next");
+      advanceToNextFlag();
+    }
+    return;
+  }
+
   questionResolved = true;
   const correct = choice === currentCountry.name;
 
+  let correctButton = null;
   optionsGrid.querySelectorAll("button").forEach((btn) => {
     btn.disabled = true;
     if (btn.textContent === currentCountry.name) {
       btn.classList.add("correct");
+      correctButton = btn;
     }
   });
 
@@ -587,6 +598,16 @@ function handleAnswer(choice, button) {
     button.classList.add("wrong");
     queueForReview(currentCountry);
     playFeedbackSound("wrong");
+    if (correctButton) {
+      correctButton.disabled = false;
+      correctButton.dataset.action = "continue";
+      correctButton.classList.add("reveal-next");
+      correctButton.setAttribute(
+        "aria-label",
+        `${currentCountry.name}. Tap to continue`
+      );
+      correctButton.focus({ preventScroll: true });
+    }
   }
 
   if (correct) {
@@ -601,7 +622,7 @@ function handleAnswer(choice, button) {
   }
 
   updateStatus();
-  nextBtn.disabled = correct;
+  nextBtn.disabled = true;
   if (correct) {
     autoAdvanceTimer = setTimeout(() => {
       advanceToNextFlag();
@@ -610,19 +631,18 @@ function handleAnswer(choice, button) {
 }
 
 function updateStatus() {
-  xpValue.textContent = `${xp} XP`;
-  streakValue.textContent = `${streak} 🔥`;
-  progressLabel.textContent = `${answered} / ${totalFlags}`;
   const progress = Math.min(answered / totalFlags, 1);
-  progressFill.style.width = `${progress * 100}%`;
-  if (inlineXpValue) {
-    inlineXpValue.textContent = `${xp} XP`;
+  if (missionXpValue) {
+    missionXpValue.textContent = `${xp} XP`;
   }
-  if (inlineProgressValue) {
-    inlineProgressValue.textContent = `${answered} / ${totalFlags}`;
+  if (missionStreakValue) {
+    missionStreakValue.textContent = `${streak} 🔥 streak`;
   }
-  if (inlineStreakValue) {
-    inlineStreakValue.textContent = `${streak} 🔥`;
+  if (missionProgressValue) {
+    missionProgressValue.textContent = `${answered} / ${totalFlags}`;
+  }
+  if (missionMeterFill) {
+    missionMeterFill.style.width = `${progress * 100}%`;
   }
   persistProgress();
 }
