@@ -214,7 +214,7 @@ const countries = [
   { name: "British Virgin Islands", flag: "Flag_of_the_British_Virgin_Islands.svg" },
   { name: "Cayman Islands", flag: "Flag_of_the_Cayman_Islands.svg" },
   { name: "Christmas Island", flag: "Flag_of_Christmas_Island.svg" },
-  { name: "Cocos Islands", flag: "Flag_of_the_Cocos_(Keeling)_Islands.svg" },
+  { name: "Cocos Islands", flag: "Flag_of_the_Cocos_(Keeling)_Islands.png" },
   { name: "Cook Islands", flag: "Flag_of_the_Cook_Islands.svg" },
   { name: "Curaçao", flag: "Flag_of_Curaçao.svg" },
   { name: "Falkland Islands", flag: "Flag_of_the_Falkland_Islands.svg" },
